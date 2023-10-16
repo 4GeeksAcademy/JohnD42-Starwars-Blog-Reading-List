@@ -1,43 +1,59 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
+			characters: [
+
+			],
+			planets: [
+
+			],
+			vehicles: [
+
+			],
+			favorites: [
+
 			]
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
+			asyncFetch: async (url) => {
+				try {
+					const resp = await fetch(url)
+					if (!resp.ok) {
+						throw new Error('Error occurred:', resp.status)
+					} else {
+						const data = resp.json()
+						return data
+					}
+				} catch (error) {
+					console.log(error)
+				}
 			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
+			getCharacters: async () => {
+				const characterResults = await getActions().asyncFetch('https://www.swapi.tech/api/people')
+				const chars = await Promise.all(characterResults.results.map(async (item) => {
+					try {
+						const char = await getActions().asyncFetch(item.url);
+						return char;
+					} catch (error) {
+						return { ...item, error };
+					}
+				}))
+				setStore({ characters: chars })
 			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
-			}
+			getPlanets: async () => {
+				const planetResults = await getActions().asyncFetch('https://www.swapi.tech/api/planets')
+				const plnts = await planetResults.map((planetResult) => {
+					return getActions().asyncFetch(planetResult.url)
+				})
+				setStore({ planets: plnts })
+			},
+			getVehicles: async () => {
+				const vehicleResults = await getActions().asyncFetch('https://www.swapi.tech/api/vehicles')
+				const vhcls = await vehicleResults.map((vehicleResult) => {
+					return asyncFetch(vehicleResult.url)
+				})
+				setStore({ vehicles: vhcls })
+			},
 		}
 	};
 };

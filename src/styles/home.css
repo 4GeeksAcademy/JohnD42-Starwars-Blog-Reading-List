@@ -1,0 +1,7 @@
+h1 {
+    color: crimson;
+}
+
+.favorite:focus {
+    box-shadow: #ffc107 0 0 10px 3px
+}
