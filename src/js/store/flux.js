@@ -42,18 +42,40 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			getPlanets: async () => {
 				const planetResults = await getActions().asyncFetch('https://www.swapi.tech/api/planets')
-				const plnts = await planetResults.map((planetResult) => {
-					return getActions().asyncFetch(planetResult.url)
-				})
+				const plnts = await Promise.all(planetResults.results.map(async (item) => {
+					try {
+						const plnt = await getActions().asyncFetch(item.url);
+						return plnt;
+					} catch (error) {
+						return { ...item, error };
+					}
+				}))
+				console.log(plnts)
 				setStore({ planets: plnts })
+				console.log(getStore().planets)
 			},
 			getVehicles: async () => {
 				const vehicleResults = await getActions().asyncFetch('https://www.swapi.tech/api/vehicles')
-				const vhcls = await vehicleResults.map((vehicleResult) => {
-					return asyncFetch(vehicleResult.url)
-				})
+				const vhcls = await Promise.all(vehicleResults.results.map(async (item) => {
+					try {
+						const vhcl = await getActions().asyncFetch(item.url);
+						return vhcl;
+					} catch (error) {
+						return { ...item, error };
+					}
+				}))
 				setStore({ vehicles: vhcls })
 			},
+			addFavorite: (category, idx) => {
+				const newFavorite = getStore()[category][idx];
+				const newFavorites = getStore().favorites.toSpliced((getStore().favorites.length - 1), 0, newFavorite)
+				setStore({ favorites: newFavorites })
+			},
+			deleteFavorite: (idx) => {
+				const currentFavorites = getStore().favorites;
+				const newFavorites = currentFavorites.toSpliced(idx, 1);
+				setStore({ favorites: newFavorites })
+			}
 		}
 	};
 };

@@ -1,26 +1,96 @@
 import React, { useContext, useEffect, useState } from "react";
-import "../../styles/home.css";
 import { useParams, Link } from 'react-router-dom';
 import { Context } from '../store/appContext'
 
 export const Details = () => {
 	const { store, actions } = useContext(Context);
 	const { category, uid } = useParams();
-	console.log(store[category])
-	// const item = store.category.filter((item) => item.uid === uid)
-	// console.log(item)
+	const itemArr = store[category].filter((item) => item.result.uid === uid)
+	const item = itemArr[0]
+	const objPropertiesPresentableKeysArr = [];
+	const objPropertiesKeysArr = [];
+	const [homeWorldName, setHomeWorldName] = useState('')
+	
+	Object.keys(item.result.properties).forEach((key, index) => {
+		if(key !== 'created' && key !== 'edited' && key !== 'url') {
+			objPropertiesKeysArr.push(key)
+			let upper = true
+			let presentableKey = key.split('');
+			key.split('').map((char, index) => {
+				if(index == 0) {
+					upper = true;
+				}
+				if(upper) {
+					presentableKey[index] = key[index].toUpperCase()
+					upper = false;
+				}
+				if(char === '_') {
+					presentableKey[index] = ' ';
+					upper = true;
+				}
+			})
+			const realPresentableKey = presentableKey.join('')
+			objPropertiesPresentableKeysArr.push(realPresentableKey)
+		}
+	})
+	useEffect(() => {
+		if(category == 'characters') {
+			const homeWorldUrl = item.result.properties.homeworld
+			store.planets.map((planet) => {
+				if (planet.result.properties.url == homeWorldUrl) {
+					console.log(planet.result.properties.name)
+					setHomeWorldName(planet.result.properties.name)
+				}
+			})
+		}
+	},[])
+	
 
 	return (
 		<div className="container">
-			{/* <div className="row d-inline-block">
-				<img src='https://www.bakiautomobile.com/wp-content/uploads/2020/06/800x600.png'/>
-				<div className="d-block">
-					<h1>
-						
-					</h1>
-
+			<div className="row border-bottom border-danger">
+				<div className="col-5 mx-auto mb-5">
+					<img className='detailsImg' src='https://www.bakiautomobile.com/wp-content/uploads/2020/06/800x600.png'/>
 				</div>
-			</div> */}
+				<div className="col-5 mx-auto mb-2">
+					<div className="row">
+						<h1>
+							{item.result.properties.name}
+						</h1>
+					</div>
+					<div className="row text-center">
+						{item.result.properties.description}
+					</div>
+				</div>
+			</div>
+			<div className="row">
+				{objPropertiesPresentableKeysArr.map((key, index) => {
+					if(key !== 'Homeworld') {
+						return (
+							<div className="col-2">
+								<p className="moreDetails">
+									{`${key}:`}
+								</p>
+								<p className="moreDetails">
+									{item.result.properties[objPropertiesKeysArr[index]]}
+								</p>
+							</div>
+						)
+					} else {
+						return (
+						<div className="col-2">
+								<p className="moreDetails">
+									{`${key}:`}
+								</p>
+								<p className="moreDetails">
+									{homeWorldName}
+								</p>
+							</div>
+							)
+					}
+					}
+				)}
+			</div>
 		</div>
 	)
 };

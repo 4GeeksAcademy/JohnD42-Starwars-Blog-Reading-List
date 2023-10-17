@@ -6,6 +6,10 @@ export const Navbar = () => {
 
     const { store, actions } = useContext(Context);
 
+    const deleteHandler = (idx) => {
+        actions.deleteFavorite(idx)
+    }
+
 	return (
 		<nav className="navbar navbar-light bg-light mb-3">
 			<img className="starWarsLogo m-2 ms-5" src='https://www.freepnglogos.com/uploads/star-wars-logo-31.png' />
@@ -14,9 +18,15 @@ export const Navbar = () => {
                     Favorites <span>{store.favorites.length}</span>
                 </button>
                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    {store.favorites.length > 0 ? store.favorites.map((favorite) => {
-                        <li><Link className="dropdown-item" to={`/details/${favorite.description.slice(1, 0, 8) === 'person' ? 'people' :
-                        favorite.description.toSpliced(1, 0, 7) === 'planet' ? 'planets' : 'vehicles'}/${favorite.uid}`}></Link></li>
+                    {store.favorites.length > 0 ? store.favorites.map((favorite, idx) => {
+                        return (
+                        <li className="d-flex">
+                            <Link className="dropdown-item link" to={`/details/${favorite.result.description.slice(2, 8) == 'person' ? 'people' : favorite.result.description.slice(2, 7) == 'planet' ? 'planets' : 'vehicles'}/${favorite.result.uid}`}>{favorite.result.properties.name}</Link>
+                            <button className="delete rounded" onClick={() => deleteHandler(idx)}>
+                                <i className="fa-solid fa-trash-can"></i>
+                            </button>
+                        </li>
+                        )
                     }) : <li><p className="dropdown-item">Empty!</p></li>}
                 </ul>
             </div>

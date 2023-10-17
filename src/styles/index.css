@@ -6,3 +6,25 @@
     width: 70px;
     height: 70px;
 }
+
+.detailsImg {
+    max-width: 100%;
+
+}
+
+.moreDetails {
+    color: crimson;
+}
+
+.link {
+    color: blue
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+.delete:hover {
+    background-color: black;
+    color: white;
+}
