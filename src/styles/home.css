@@ -5,3 +5,8 @@
 .favorite:focus {
     box-shadow: #ffc107 0 0 10px 3px
 }
+
+.card-footer {
+    background-color: white;
+    border: none;
+}

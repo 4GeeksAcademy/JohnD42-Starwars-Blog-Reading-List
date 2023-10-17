@@ -8,35 +8,34 @@ export const Home = () => {
 
 	const navigate = useNavigate()
 	const { store, actions } = useContext(Context);
-	console.log(store.planets)
+	const categories = []
+	const capitalizedCategories = []
+		Object.keys(store).forEach(async (key, index) => {
+			if(key !== 'favorites' && key !=='dictionary') {
+				categories.push(key)
+				let tempCategory = key.split('');
+				tempCategory[0] = tempCategory[0].toUpperCase()
+				const upperCaseCategory = tempCategory.join('')
+				capitalizedCategories.push(upperCaseCategory)
+			}
+		})
 
 	return (
-		<div className="container horizontal-scrollable">
-			
-			<div className="row category">
-				<h1>Characters</h1>
-			</div>
-			<div className="row flex-row flex-nowrap overflow-auto">
-				{store.characters.map((data, idx) => {
-					return <Card idx={idx} category='characters'/>
-				})}
-			</div>
-			<div className="row category">
-				<h1>Planets</h1>
-			</div>
-			<div className="row flex-row flex-nowrap overflow-auto">
-				{store.planets.map((data, idx) => {
-					return <Card idx={idx} category='planets'/>
-				})}
-			</div>
-			<div className="row category">
-				<h1>Vehicles</h1>
-			</div>
-			<div className="row flex-row flex-nowrap overflow-auto">
-				{store.vehicles.map((data, idx) => {
-					return <Card idx={idx} category='vehicles'/>
-				})}
-			</div>
+		<div className="container pb-3">
+			{categories.map((category, index) => {
+				return (
+				<div>
+					<div className="row category">
+						<h1>{capitalizedCategories[index]}</h1>
+					</div>
+					<div className="row flex-row flex-nowrap overflow-auto mb-3 pb-3">
+						{store[category].map((data, idx) => {
+							return <Card idx={idx} category={category}/>
+						})}
+					</div>
+				</div>
+				)
+			})}
 		</div>
 	)
 };

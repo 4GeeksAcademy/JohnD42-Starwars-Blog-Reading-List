@@ -21,7 +21,7 @@ export const Navbar = () => {
                     {store.favorites.length > 0 ? store.favorites.map((favorite, idx) => {
                         return (
                         <li className="d-flex">
-                            <Link className="dropdown-item link" to={`/details/${favorite.result.description.slice(2, 8) == 'person' ? 'people' : favorite.result.description.slice(2, 7) == 'planet' ? 'planets' : 'vehicles'}/${favorite.result.uid}`}>{favorite.result.properties.name}</Link>
+                            <Link className="dropdown-item link" to={`/details/${favorite.result.description.slice(2, 8) == 'person' ? 'characters' : favorite.result.description.slice(2, 8) == 'planet' ? 'planets' : favorite.result.description.slice(2, 9) === 'vehicle' ? 'vehicles' : 'starships'}/${favorite.result.uid}`}>{favorite.result.properties.name}</Link>
                             <button className="delete rounded" onClick={() => deleteHandler(idx)}>
                                 <i className="fa-solid fa-trash-can"></i>
                             </button>

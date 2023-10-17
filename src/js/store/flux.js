@@ -10,7 +10,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			vehicles: [
 
 			],
+			starships: [
+
+			],
 			favorites: [
+
+			],
+			dictionary: [
 
 			]
 		},
@@ -22,49 +28,35 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error('Error occurred:', resp.status)
 					} else {
 						const data = resp.json()
+						console.log(data)
 						return data
 					}
 				} catch (error) {
 					console.log(error)
 				}
 			},
-			getCharacters: async () => {
-				const characterResults = await getActions().asyncFetch('https://www.swapi.tech/api/people')
-				const chars = await Promise.all(characterResults.results.map(async (item) => {
-					try {
-						const char = await getActions().asyncFetch(item.url);
-						return char;
-					} catch (error) {
-						return { ...item, error };
+			getData: async () => {
+				Object.keys(getStore()).forEach(async (key, index) => {
+					if (key !== 'favorites' && key !=='dictionary') {
+						const url = key === 'characters' ? 'https://www.swapi.tech/api/people' : `https://www.swapi.tech/api/${key}`
+						const apiResults = await getActions().asyncFetch(url)
+						apiResults.results.map(async (item, idx) => {
+							try {
+								const newItem = await getActions().asyncFetch(item.url);
+								const currentItems = getStore()[key]
+								const tempItems = currentItems.toSpliced(idx, 0, newItem)
+								setStore({ [key]: tempItems })
+								const currentDict = getStore().dictionary;
+								const tempDict = currentDict.toSpliced(currentDict.length, 0, newItem)
+								setStore({dictionary: tempDict})
+								console.log(getStore().dictionary)
+							} catch (error) {
+								return { ...item, error };
+							}
+						})
 					}
-				}))
-				setStore({ characters: chars })
-			},
-			getPlanets: async () => {
-				const planetResults = await getActions().asyncFetch('https://www.swapi.tech/api/planets')
-				const plnts = await Promise.all(planetResults.results.map(async (item) => {
-					try {
-						const plnt = await getActions().asyncFetch(item.url);
-						return plnt;
-					} catch (error) {
-						return { ...item, error };
-					}
-				}))
-				console.log(plnts)
-				setStore({ planets: plnts })
-				console.log(getStore().planets)
-			},
-			getVehicles: async () => {
-				const vehicleResults = await getActions().asyncFetch('https://www.swapi.tech/api/vehicles')
-				const vhcls = await Promise.all(vehicleResults.results.map(async (item) => {
-					try {
-						const vhcl = await getActions().asyncFetch(item.url);
-						return vhcl;
-					} catch (error) {
-						return { ...item, error };
-					}
-				}))
-				setStore({ vehicles: vhcls })
+				})
+				
 			},
 			addFavorite: (category, idx) => {
 				const newFavorite = getStore()[category][idx];

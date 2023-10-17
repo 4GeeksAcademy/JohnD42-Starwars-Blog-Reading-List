@@ -50,7 +50,7 @@ export const Details = () => {
 		<div className="container">
 			<div className="row border-bottom border-danger">
 				<div className="col-5 mx-auto mb-5">
-					<img className='detailsImg' src='https://www.bakiautomobile.com/wp-content/uploads/2020/06/800x600.png'/>
+					<img className='detailsImg' src={`https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img/${category}/${uid}.jpg`}/>
 				</div>
 				<div className="col-5 mx-auto mb-2">
 					<div className="row">
@@ -59,7 +59,7 @@ export const Details = () => {
 						</h1>
 					</div>
 					<div className="row text-center">
-						{item.result.properties.description}
+						{item.result.description}
 					</div>
 				</div>
 			</div>
@@ -80,10 +80,7 @@ export const Details = () => {
 						return (
 						<div className="col-2">
 								<p className="moreDetails">
-									{`${key}:`}
-								</p>
-								<p className="moreDetails">
-									{homeWorldName}
+									{`${key}:`} {homeWorldName}
 								</p>
 							</div>
 							)
