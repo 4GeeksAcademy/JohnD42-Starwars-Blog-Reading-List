@@ -45,3 +45,29 @@
     -webkit-box-shadow: inset 0 0 8px     rgba(0,0,0,0.8); 
     color: lightgray
 }
+
+.searchContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.searchInner {
+    display: flex;
+}
+
+.searchDropdown {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid gray;
+}
+
+.searchDropdown:empty {
+    border: none;
+}
+
+.searchDropdownRow {
+    cursor: pointer;
+    text-align: start;
+    margin: 2px 0;
+}

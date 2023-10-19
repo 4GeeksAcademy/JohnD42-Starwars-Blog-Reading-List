@@ -28,7 +28,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error('Error occurred:', resp.status)
 					} else {
 						const data = resp.json()
-						console.log(data)
 						return data
 					}
 				} catch (error) {
@@ -37,36 +36,58 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			getData: async () => {
 				Object.keys(getStore()).forEach(async (key, index) => {
-					if (key !== 'favorites' && key !=='dictionary') {
-						const url = key === 'characters' ? 'https://www.swapi.tech/api/people' : `https://www.swapi.tech/api/${key}`
-						const apiResults = await getActions().asyncFetch(url)
-						apiResults.results.map(async (item, idx) => {
-							try {
-								const newItem = await getActions().asyncFetch(item.url);
-								const currentItems = getStore()[key]
-								const tempItems = currentItems.toSpliced(idx, 0, newItem)
-								setStore({ [key]: tempItems })
-								const currentDict = getStore().dictionary;
-								const tempDict = currentDict.toSpliced(currentDict.length, 0, newItem)
-								setStore({dictionary: tempDict})
-								console.log(getStore().dictionary)
-							} catch (error) {
-								return { ...item, error };
-							}
-						})
+					let localStoreData = localStorage.getItem(key)
+					if (localStoreData !== null && getStore()[key].length === 0) {
+						localStoreData = JSON.parse(localStoreData)
+						setStore({ [key]: localStoreData });
+					}
+					if (getStore()[key].length === 0) {
+						if (key !== 'favorites' && key !== 'dictionary') {
+							const url = key === 'characters' ? 'https://www.swapi.tech/api/people' : `https://www.swapi.tech/api/${key}`
+							const apiResults = await getActions().asyncFetch(url)
+							await apiResults.results.map(async (item, idx) => {
+								try {
+									const newItem = await getActions().asyncFetch(item.url);
+									const currentItems = getStore()[key]
+									const tempItems = currentItems.toSpliced(idx, 0, newItem)
+									setStore({ [key]: tempItems })
+									const currentDict = getStore().dictionary;
+									const tempDict = currentDict.toSpliced(currentDict.length, 0, newItem)
+									setStore({ dictionary: tempDict })
+								} catch (error) {
+									return { ...item, error };
+								}
+							})
+						}
 					}
 				})
-				
 			},
 			addFavorite: (category, idx) => {
 				const newFavorite = getStore()[category][idx];
-				const newFavorites = getStore().favorites.toSpliced((getStore().favorites.length - 1), 0, newFavorite)
+				const newFavorites = getStore().favorites.toSpliced(getStore().favorites.length, 0, newFavorite)
 				setStore({ favorites: newFavorites })
 			},
-			deleteFavorite: (idx) => {
+			deleteFavorite: (item) => {
 				const currentFavorites = getStore().favorites;
-				const newFavorites = currentFavorites.toSpliced(idx, 1);
+				const newFavorites = currentFavorites.filter((fav) => fav.result.properties.name !== item.result.properties.name)
 				setStore({ favorites: newFavorites })
+			},
+			toggleFavorite: async (item, category, idx) => {
+				const thisFavorite = getStore()[category][idx]
+				const currentFavorites = getStore().favorites
+				const currentFavoriteNames = []
+				getStore().favorites.map((fav) => {
+					if (!currentFavoriteNames.includes(fav.result.properties.name)) {
+						currentFavoriteNames.push(fav.result.properties.name)
+					}
+				})
+				if (currentFavoriteNames.includes(thisFavorite.result.properties.name)) {
+					const newFavorites = await currentFavorites.filter((fav) => fav.result.properties.name !== item.result.properties.name)
+					setStore({ favorites: newFavorites })
+				} else {
+					const newFavorites = await getStore().favorites.toSpliced(getStore().favorites.length, 0, thisFavorite)
+					setStore({ favorites: newFavorites })
+				}
 			}
 		}
 	};

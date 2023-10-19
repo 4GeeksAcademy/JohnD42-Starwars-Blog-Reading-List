@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from '../store/appContext'
 import { useNavigate } from "react-router";
 
@@ -11,11 +11,26 @@ const Card = (props) => {
     const item = store[category][idx];
     const uid = item.result.uid;
     const imgUrl = `https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img/${category}/${uid}.jpg`
-    let [clicked, setClicked] = useState(false)
+    let [favorite, setFavorite] = useState(false)
+    const favoriteNames = []
+
+    if(item.result.properties.name === "Luke Skywalker") {
+    }
+
+    useEffect(() => {
+        store.favorites.map((favorite) => {
+            favoriteNames.push(favorite.result.properties.name)
+        })
+        if(favoriteNames.includes(item.result.properties.name)) {
+            setFavorite(true)
+        } else {
+            setFavorite(false)
+        }
+    },[store.favorites])
 
     const clickHandler = () => {
-        setClicked(!clicked)
-        actions.addFavorite(category, idx)
+        setFavorite(!favorite)
+        actions.toggleFavorite(item, category, idx)
     }
 
     return (
@@ -33,7 +48,7 @@ const Card = (props) => {
                 </div>
                 <div className="d-flex justify-content-between card-footer">
                     <button className="btn btn-outline-primary" onClick={() => navigate(`/details/${category}/${item.result.uid}`)}>Learn more!</button>
-                    <button className='btn btn-outline-warning favorite' onClick={clickHandler}>{store.favorites.includes(item) ? <i className="fa-solid fa-heart"></i> : <i className="fa-regular fa-heart"></i>}</button>
+                    <button className='btn btn-outline-warning favorite' onClick={clickHandler}>{favorite ? <i className="fa-solid fa-heart"></i> : <i className="fa-regular fa-heart"></i>}</button>
                 </div>
             </div>
         </div>
