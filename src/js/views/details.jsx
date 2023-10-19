@@ -50,7 +50,9 @@ export const Details = () => {
 		<div className="container">
 			<div className="row border-bottom border-danger">
 				<div className="col-5 mx-auto mb-5">
-					<img className='detailsImg' src={`https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img/${category}/${uid}.jpg`}/>
+					<img className='detailsImg' src={`https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img/${category}/${uid}.jpg`} onError={({ currentTarget }) => {
+                    currentTarget.onerror = null; // prevents looping
+                    currentTarget.src='https://raw.githubusercontent.com/tbone849/star-wars-guide/master/build/assets/img/big-placeholder.jpg';}}/>
 				</div>
 				<div className="col-5 mx-auto mb-2">
 					<div className="row">

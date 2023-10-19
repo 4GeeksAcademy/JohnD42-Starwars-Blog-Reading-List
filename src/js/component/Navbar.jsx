@@ -44,7 +44,7 @@ export const Navbar = () => {
                             return (
                             <li className="d-flex">
                                 <Link className="dropdown-item link" to={`/details/${favorite.result.description.slice(2, 8) == 'person' ? 'characters' : favorite.result.description.slice(2, 8) == 'planet' ? 'planets' : favorite.result.description.slice(2, 9) === 'vehicle' ? 'vehicles' : 'starships'}/${favorite.result.uid}`}>{favorite.result.properties.name}</Link>
-                                <button className="delete rounded" onClick={() => deleteHandler(idx)}>
+                                <button className="delete rounded" onClick={() => deleteHandler(favorite)}>
                                     <i className="fa-solid fa-trash-can"></i>
                                 </button>
                             </li>
