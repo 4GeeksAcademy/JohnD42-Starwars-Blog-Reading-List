@@ -35,7 +35,7 @@ export const Navbar = () => {
                     )}
                 </div>
             </div>
-            <div className="dropdown">
+            <div className="dropdown me-3">
                 <button className="btn btn-primary dropdown-toggle m-3 me-5" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                     Favorites <span>{store.favorites.length}</span>
                 </button>

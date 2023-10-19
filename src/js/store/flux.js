@@ -62,11 +62,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				})
 			},
-			addFavorite: (category, idx) => {
-				const newFavorite = getStore()[category][idx];
-				const newFavorites = getStore().favorites.toSpliced(getStore().favorites.length, 0, newFavorite)
-				setStore({ favorites: newFavorites })
-			},
 			deleteFavorite: (item) => {
 				const currentFavorites = getStore().favorites;
 				const newFavorites = currentFavorites.filter((fav) => fav.result.properties.name !== item.result.properties.name)
